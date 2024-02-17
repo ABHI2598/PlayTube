@@ -2,8 +2,10 @@
   "name": "youtube_backend",
   "version": "1.0.0",
   "description": "Whole Backend for Youtube",
+  "type": "module",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -13,5 +15,8 @@
     "mern"
   ],
   "author": "Abhinav Pandey",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
 }
