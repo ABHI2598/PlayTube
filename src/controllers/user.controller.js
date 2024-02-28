@@ -5,7 +5,7 @@ const { User } = require("../models/user.model");
 const uploadOnCloudinary = require("../utils/cloudinary");
 const { ApiResponse } = require("../utils/ApiResponse");
 const zod = require("zod");
-
+const jwt = require("jsonwebtoken");
 
 const generateAccessAndRefreshToken = async( userId ) => {
     try {
@@ -189,13 +189,13 @@ const refreshAccessToken = asyncHandler( async(req,res) => {
             secure: true
         };
 
-        const {accessToken, newRefreshToken } = await generateAccessAndRefreshToken(user._id);
+        const {accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
 
         return res.status(200)
         .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", newRefreshToken, options)
+        .cookie("refreshToken", refreshToken, options)
         .json(
-            new ApiResponse(200,{accessToken, refreshToken: newRefreshToken}, "Access token refresh Success")
+            new ApiResponse(200,{accessToken, refreshToken}, "Access token refresh Success")
         );
         
     } catch (error) {
