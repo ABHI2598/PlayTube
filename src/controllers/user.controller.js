@@ -201,6 +201,122 @@ const refreshAccessToken = asyncHandler( async(req,res) => {
     } catch (error) {
         throw new ApiError(401, error?.message || "Invalid Refresh Token");
     }
+});
+
+const changeCurrentPassword = asyncHandler( async(req,res) => {
+    const { oldPassword, newPassword } = req.body;
+
+    const user = await User.findById(req.user._id);
+
+    if(!user)
+    {
+        throw new ApiError(401, "User does not exists");
+    }
+
+    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+
+    if(!isPasswordCorrect)
+    {
+        throw new ApiError(401, "Old password did not match");
+    }
+
+    user.password = newPassword;
+
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json( new ApiResponse(200, {}, "Password Changed SuccessFully"));
+});
+
+const updateAccountDetails = asyncHandler( async(req,res) =>{
+    const { fullName, email } = req.body;
+    
+    if( !fullName || !email )
+    {
+        throw new ApiError(401, "All fields are Mandatory");
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set:{
+                fullName,
+                email
+            }
+        },
+        {
+            new: true
+        }
+    ).select(" -password");
+
+    return res.status(200).json(new ApiResponse(200,user, "Account details updated!!"));
+
+});
+
+const updateAvatarImage = asyncHandler( async(req,res)=>{
+    const avatarLocalPath = req.file?.path;
+
+    if(!avatarLocalPath)
+    {
+        throw new ApiError(401,"avatarLocalPath does not exists");
+    }
+
+    const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+    if(!avatar?.url)
+    {
+        throw new ApiError(401,"Avatar url not found");
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set:{
+                avatar: avatar?.url
+            }
+        },
+        {
+            new : true,
+        }
+    ).select(" -password");
+
+    return res.status(200).json(new ApiResponse(200,user,"Avatar updated SuccessFully"));
+
+});
+
+const updateCoverImage = asyncHandler( async(req,res)=>{
+    const coverImageLocalPath = req.file?.path;
+
+    if(!coverImageLocalPath)
+    {
+        throw new ApiError(401,"coverImageLocal Path does not exists");
+    }
+
+    const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+
+    if(!coverImage?.url)
+    {
+        throw new ApiError(401, "coverImage url not found");
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set:{
+                coverImage: coverImage?.url
+            }
+        },
+        {
+            new:true
+        }
+    );
+
+    return res.status(200).json(new ApiResponse(200,user,"coverImage update success"));
+});
+
+const getCurrentUser = asyncHandler( async(req,res)=>{
+    return res.status(200).json(
+        new ApiResponse(200, req.user, "User fetched SuccessFully")
+    );
 })
 
 
@@ -208,5 +324,10 @@ module.exports={
     registerUser,
     loginUser,
     logoutUser,
-    refreshAccessToken
+    refreshAccessToken,
+    changeCurrentPassword,
+    updateAccountDetails,
+    updateAvatarImage,
+    updateCoverImage,
+    getCurrentUser
 }

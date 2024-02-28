@@ -2,7 +2,7 @@
 const express = require("express");
 const upload  = require("../middlewares/multer.middleware");
 const AuthMiddleWare = require("../middlewares/auth.middlerware");
-const {registerUser, loginUser, logoutUser, refreshAccessToken} = require("../controllers/user.controller");
+const {registerUser, loginUser, logoutUser, refreshAccessToken, getCurrentUser, changeCurrentPassword, updateAvatarImage, updateCoverImage, updateAccountDetails} = require("../controllers/user.controller");
 
 const router = express.Router();
 
@@ -22,5 +22,16 @@ router.post("/login", loginUser);
 router.post("/logout",AuthMiddleWare, logoutUser);
 
 router.post("/refresh-access-token", refreshAccessToken);
+
+router.get("/getCurrentUser",AuthMiddleWare, getCurrentUser);
+
+router.put("/changePassword", AuthMiddleWare, changeCurrentPassword);
+
+router.put("/updateAvatar",upload.single("avatar"),AuthMiddleWare, updateAvatarImage);
+
+router.put("/updateCoverImage",upload.single("coverImage"), AuthMiddleWare, updateCoverImage);
+
+router.put("/updateAccountDetails", AuthMiddleWare, updateAccountDetails);
+
 
 module.exports=router
