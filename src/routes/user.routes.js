@@ -2,7 +2,7 @@
 const express = require("express");
 const upload  = require("../middlewares/multer.middleware");
 const AuthMiddleWare = require("../middlewares/auth.middlerware");
-const {registerUser, loginUser, logoutUser} = require("../controllers/user.controller");
+const {registerUser, loginUser, logoutUser, refreshAccessToken} = require("../controllers/user.controller");
 
 const router = express.Router();
 
@@ -20,5 +20,7 @@ router.post("/register" , upload.fields([
 router.post("/login", loginUser);
 
 router.post("/logout",AuthMiddleWare, logoutUser);
+
+router.post("/refresh-access-token", refreshAccessToken);
 
 module.exports=router
