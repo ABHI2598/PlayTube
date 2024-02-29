@@ -447,6 +447,5 @@ module.exports={
     updateAvatarImage,
     updateCoverImage,
     getCurrentUser,
-    getUserChannelProfile,
     getUserChannelProfile
 }
