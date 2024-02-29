@@ -2,7 +2,7 @@
 const express = require("express");
 const upload  = require("../middlewares/multer.middleware");
 const AuthMiddleWare = require("../middlewares/auth.middlerware");
-const {registerUser, loginUser, logoutUser, refreshAccessToken, getCurrentUser, changeCurrentPassword, updateAvatarImage, updateCoverImage, updateAccountDetails, getUserChannelProfile} = require("../controllers/user.controller");
+const {registerUser, loginUser, logoutUser, refreshAccessToken, getCurrentUser, changeCurrentPassword, updateAvatarImage, updateCoverImage, updateAccountDetails, getUserChannelProfile, getUserWatchHistory} = require("../controllers/user.controller");
 
 const router = express.Router();
 
@@ -35,6 +35,6 @@ router.put("/updateAccountDetails", AuthMiddleWare, updateAccountDetails);
 
 router.get("/fetchChannel/:username", AuthMiddleWare, getUserChannelProfile);
 
-router.get("/channel", AuthMiddleWare, getUserChannelProfile);
+router.get("/channel", AuthMiddleWare, getUserWatchHistory);
 
 module.exports=router
