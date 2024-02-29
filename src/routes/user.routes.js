@@ -35,6 +35,6 @@ router.put("/updateAccountDetails", AuthMiddleWare, updateAccountDetails);
 
 router.get("/fetchChannel/:username", AuthMiddleWare, getUserChannelProfile);
 
-router.get("/channel", AuthMiddleWare, getUserWatchHistory);
+router.get("/watchHistory", AuthMiddleWare, getUserWatchHistory);
 
 module.exports=router
