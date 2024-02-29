@@ -6,6 +6,7 @@ const uploadOnCloudinary = require("../utils/cloudinary");
 const { ApiResponse } = require("../utils/ApiResponse");
 const zod = require("zod");
 const jwt = require("jsonwebtoken");
+const { default: mongoose } = require("mongoose");
 
 const generateAccessAndRefreshToken = async( userId ) => {
     try {
@@ -389,6 +390,53 @@ const getUserChannelProfile = asyncHandler( async(req,res)=>{
     return res.status(200).json( new ApiResponse(200, channel[0], "User channel fetched successfully"));
 });
 
+
+const getUserWatchHistory = asyncHandler( async(req,res)=>{
+       
+     const user = await User.aggregate([
+        {
+            $match:{
+               _id: new mongoose.Schema.Types.ObjectId(req.user_id)
+            }
+        },
+        {
+            $lookup:{
+                from: "videos",
+                localField: "_id",
+                foreignField: "watchHistory",
+                as: "watchHistory",
+                pipeline:[
+                    {
+                        $lookup:{
+                            from:"users",
+                            localField:"owner",
+                            foreignField:"_id",
+                            as:"owner",
+                            pipeline:[
+                                {
+                                    $project:{
+                                        fullName: 1,
+                                        username:1
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                       $addFields:{
+                           owner: {
+                               $arrayElemAt: ["$owner", 0]
+                           }
+                       }  
+                    }
+                ]
+            }
+        }
+     ]);
+
+     return res.status(200).json( new ApiResponse(200, user[0], "Current WatchHistory Fetched SuccessFully"));
+});
+
 module.exports={
     registerUser,
     loginUser,
@@ -399,5 +447,6 @@ module.exports={
     updateAvatarImage,
     updateCoverImage,
     getCurrentUser,
+    getUserChannelProfile,
     getUserChannelProfile
 }
