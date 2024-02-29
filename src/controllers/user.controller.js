@@ -1,12 +1,11 @@
-const express = require("express");
+const zod = require("zod");
+const jwt = require("jsonwebtoken");
+const mongoose= require("mongoose");
+const uploadOnCloudinary = require("../utils/cloudinary");
 const { asyncHandler } = require("../utils/AsyncHandler");
 const { ApiError } = require("../utils/ApiError");
 const { User } = require("../models/user.model");
-const uploadOnCloudinary = require("../utils/cloudinary");
 const { ApiResponse } = require("../utils/ApiResponse");
-const zod = require("zod");
-const jwt = require("jsonwebtoken");
-const { default: mongoose } = require("mongoose");
 
 const generateAccessAndRefreshToken = async( userId ) => {
     try {
