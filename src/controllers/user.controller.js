@@ -292,7 +292,7 @@ const updateCoverImage = asyncHandler( async(req,res)=>{
     }
 
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
-
+    //console.log("image: "+ coverImage)
     if(!coverImage?.url)
     {
         throw new ApiError(401, "coverImage url not found");
