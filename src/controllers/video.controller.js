@@ -79,14 +79,47 @@ const publishVideo = asyncHandler( async(req,res)=>{
             throw new ApiError(400, "Error while publishing the video");
         }
 
-        createdVideo.isPublished = true;
-        await video.save({ validateBeforeSave: false })
-
         return res.status(200).json(
             new ApiResponse(200,createdVideo,"Video Published SuccessFully")
         );
 
 });
+
+// const getVideoById = asyncHandler( async(req,res) => {
+//      const { videoId } = req.params;
+     
+//      const video = await Video.findById(videoId);
+
+//      if(!video)
+//      {
+//         throw new ApiError(400, "Invalid Video Id");
+//      }
+
+
+
+// })
+
+const togglePublishStatus = asyncHandler(async (req, res) => {
+    const { videoId } = req.params
+
+    if (!isValidObjectId(videoId)) {
+        throw new ApiError(400, "Invalid video id");
+    }
+
+    const video = await Video.findById(videoId)
+    if (!video) {
+        throw new ApiError(401, "Video not found")
+    }
+
+    video.isPublished = !video.isPublished
+
+    const updatedVideo = await video.save({ validateBeforeSave: false });
+    if (!updatedVideo) {
+        throw new ApiError(400, "error while updating video");
+    }
+
+    res.status(200).json(new ApiResponse(200, updatedVideo, "Publish status toggled successfully"));
+})
 
 
 
@@ -98,4 +131,5 @@ const publishVideo = asyncHandler( async(req,res)=>{
 
 module.exports = {
     publishVideo,
+    togglePublishStatus
 }

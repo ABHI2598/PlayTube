@@ -1,7 +1,7 @@
 const express = require("express");
 
 const AuthMiddleWare = require("../middlewares/auth.middlerware");
-const {publishVideo} = require("../controllers/video.controller");
+const {publishVideo,togglePublishStatus} = require("../controllers/video.controller");
 const upload =require("../middlewares/multer.middleware");
 
 const router = express.Router();
@@ -20,5 +20,6 @@ router.post("/publish", upload.fields([
 ]),
  AuthMiddleWare, publishVideo);
 
+router.post('/togglePublishStatus:videoId',AuthMiddleWare, togglePublishStatus);
 
 module.exports = router;
